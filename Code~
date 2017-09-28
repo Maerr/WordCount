@@ -1,0 +1,178 @@
+#include <iostream>
+#include <string>
+#include <stdio.h>
+using namespace std;
+
+FILE *file;
+int chars = 0, words = 0, lines = 1, symbols = 0, s[500];
+char AnsWer;
+int Choice, Line_1, Line_2;
+char c;
+
+void showmenu()
+{
+	printf("                              wordcount计数器                      \n");
+	cout << "使用说明：目前文件默认为当前目录下的abc.txt文件，直接执行代码后，可根据菜单的内容来选择相应的操作" << endl<<endl;
+	cout << "                ********************主菜单*********************" << endl;
+	cout << "                         1、显示字符数、单词数和行数      *" << endl;
+	cout << "                                                          *" << endl;
+	cout << "                         2、显示符号数                    *" << endl;
+	cout << "                                                          *" << endl;
+	cout << "                         3、显示行数及行分类              *" << endl;
+	cout << "                                                          *" << endl;
+	cout << "                         4、显示所有                      *" << endl;
+	cout << "                                                          *" << endl;
+	cout << "                         5、退出                           *" << endl;
+	cout << "                ***********************************************" << endl;
+	cout << "                * 请选择需要的功能：";
+}
+
+// 分析所有字符数、单词数、行数及行类的函数
+void Statistics()
+{
+	while ((c = fgetc(file)) != EOF)
+	{
+		chars++;
+		if (((c <= 'z') && (c >= 'a')) || ((c <= 'Z') && (c >= 'A')) || ((c >= '0') && (c <= '9')))
+		{
+			words++;
+			while ((c = fgetc(file)) != EOF)
+			{
+				chars++;
+				if (((c <= 'z') && (c >= 'a')) || ((c <= 'Z') && (c >= 'A')) || ((c >= '0') && (c <= '9')))
+				{
+					//空循环.移向行尾
+				}
+				else if (c == '\n')
+				{
+					s[lines] = 1;
+					lines++;//列数
+					break;
+				}
+				else if (c == ' ')
+					break;
+				else
+				{
+					symbols++;
+					break;
+				}
+			}
+		}
+		else if (c == '/')
+		{
+			if ((c = fgetc(file)) == '/')
+			{
+				symbols += 2;
+				s[lines] = 2;
+				fseek(file, -1L, SEEK_CUR);//重定位指针
+			}
+		}
+		else if (c == '\n')
+		{
+			if (s[lines] != 2)
+				s[lines] = 1;
+			lines++;
+		}
+		else if (c == ' ')
+		{
+		}
+		else
+			symbols++;//符号数
+	}
+	if (s[lines] != 2)
+		s[lines] = 1;
+}
+void Switch(int choice)
+{
+	while (Choice != 5)
+	{
+		switch (Choice)
+		{
+		case 1:
+			cout << "                * 字符数：" << chars << endl;
+			cout << "                * 单词数：" << words << endl;
+			cout << "                * 行数  ：" << lines << endl;
+			cout << "                * 按任意键返回：";
+			AnsWer = getchar();
+			AnsWer = getchar();
+			break;
+		case 2:
+			cout << "                * 符号数：" << symbols << endl;
+			cout << "                * 按任意键返回：";
+			AnsWer = getchar();
+			AnsWer = getchar();
+			break;
+		case 3:
+			cout << "                * 行数：" << lines << endl;
+			for (Line_1 = 1; Line_1 <= lines; Line_1++)
+			{
+				if (s[Line_1] == 1)
+				{
+					if (Line_1<10)
+						cout << "                 第" << Line_1 << "行为   代码行" << endl;
+					else if (Line_1<100)
+						cout << "                 第" << Line_1 << "行为  代码行" << endl;
+					else
+						cout << "                 第" << Line_1 << "行为 代码行" << endl;
+				}
+				else if (s[Line_1] == 2)
+				{
+					if (Line_1<10)
+						cout << "                 第" << Line_1 << "行为   注释行" << endl;
+					else if (Line_1<100)
+						cout << "                 第" << Line_1 << "行为  注释行" << endl;
+					else
+						cout << "                 第" << Line_1 << "行为 注释行" << endl;
+				}
+			}
+			cout << "                * 按任意键返回：";
+			AnsWer = getchar();
+			AnsWer = getchar();
+			break;
+		case 4:
+			cout << "             字符数：" << chars << endl;
+			cout << "               单词数：" << words << endl;
+			cout << "               符号数：" << symbols << endl;
+			cout << "               行数  ：" << lines << endl;
+			for (Line_2 = 1; Line_2 <= lines; Line_2++)
+			{
+				if (s[Line_2] == 1)
+				{
+					if (Line_2<10)
+						cout << "          第" << Line_2 << "行为   代码行" << endl;
+					else if (Line_2<100)
+						cout << "          第" << Line_2 << "行为  代码行" << endl;
+					else
+						cout << "          第" << Line_2 << "行为 代码行" << endl;
+				}
+				else if (s[Line_2] == 2)
+				{
+					if (Line_2<10)
+						cout << "          第" << Line_2 << "行为   注释行" << endl;
+					else if (Line_2<100)
+						cout << "          第" << Line_2 << "行为  注释行" << endl;
+					else
+						cout << "          第" << Line_2 << "行为 注释行" << endl;
+				}
+			}
+			cout << "请任意键返回主菜单：";
+			AnsWer = getchar();
+			getchar();
+			break;
+		}
+		system("cls");
+		showmenu();
+		cin >> Choice;
+	}
+}
+
+void main()
+{
+	file = fopen("abc.txt", "r");
+	Statistics();
+	fclose(file);
+	showmenu();
+	cin >> Choice;
+	Switch(Choice);
+	system("pause");	
+}
